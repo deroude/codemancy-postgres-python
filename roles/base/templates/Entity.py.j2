@@ -19,7 +19,7 @@ class {{ entity.name }}(DB.Model):
 {% for field in fields %}
 {% if field.attributes|selectattr("name","equalto","fk")|selectattr("value","equalto","ManyToOne")|list|length > 0 %}
     {{ field.name }}Id = DB.Column(DB.BigInteger, DB.ForeignKey('{{(field.attributes|selectattr("name","equalto","type")|first).value | lower}}.id'), nullable=False)
-    {{ field.name }} = DB.relationship('{{(field.attributes|selectattr("name","equalto","type")|first).value}}'
+    {{ field.name }} = DB.relationship('{{(field.attributes|selectattr("name","equalto","type")|first).value}}')
 {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Date")|list|length > 0 %}
     {{ field.name }} = DB.Column(DB.DateTime, default=datetime.datetime.utcnow)
 {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","String")|list|length > 0 %}
