@@ -3,53 +3,46 @@ import enum
 from marshmallow_enum import EnumField
 from app.setup import DB, MA
 
-{%- for field in fields %}
+{% for field in fields %}
 {% if field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","enumeration")|list|length > 0 %}
 class {{ field.name }}Values(enum.Enum):
     """{{ field.name }} Enum"""
-    {% for pv in (field.attributes|selectattr("name","equalto","enum")|first).possibleValues|list %}
+{% for pv in (field.attributes|selectattr("name","equalto","enum")|first).possibleValues|list %}
     {{ pv }} = enum.auto()
-    {% endfor %}
+{% endfor %}
 {% endif %}
 {% endfor %}
 
 class {{ entity.name }}(DB.Model):
     """Model class"""
-    {% for field in fields %}
-    {% if field.attributes|selectattr("name","equalto","fk")|selectattr("value","equalto","ManyToOne")|list|length > 0 %}
+{% for field in fields %}
+{% if field.attributes|selectattr("name","equalto","fk")|selectattr("value","equalto","ManyToOne")|list|length > 0 %}
     {{ field.name }}Id = DB.Column(DB.BigInteger, DB.ForeignKey('{{(field.attributes|selectattr("name","equalto","type")|first).value | lower}}.id'), nullable=False)
     {{ field.name }} = DB.relationship('{{(field.attributes|selectattr("name","equalto","type")|first).value}}'
-
-    {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Date")|list|length > 0 %}
+{% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Date")|list|length > 0 %}
     {{ field.name }} = DB.Column(DB.DateTime, default=datetime.datetime.utcnow)
-
-    {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","String")|list|length > 0 %}
+{% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","String")|list|length > 0 %}
     {{ field.name }} = DB.Column(DB.String(256))
-
-    {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Text")|list|length > 0 %}
+{% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Text")|list|length > 0 %}
     {{ field.name }} = DB.Column(DB.Text)
-
-    {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Integer")|list|length > 0 %}
+{% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Integer")|list|length > 0 %}
     {{ field.name }} = DB.Column(DB.Integer)
-
-    {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Double")|list|length > 0 %}
+{% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Double")|list|length > 0 %}
     {{ field.name }} = DB.Column(DB.Float)
-
-    {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Long")|list|length > 0 %}
+{% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Long")|list|length > 0 %}
     {{ field.name }} = DB.Column(DB.BigInteger)
-
-    {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","enumeration")|list|length > 0 %}
+{% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","enumeration")|list|length > 0 %}
     {{ field.name }} = DB.Column(DB.Enum({{ field.name }}Values))
-    {%- endif %}
-    {%- endfor %}
+{% endif %}
+{% endfor %}
 
 class {{ entity.name }}Schema(MA.ModelSchema):
     """Serialization schema"""
-    {%- for field in fields %}
-    {% if field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","enumeration")|list|length > 0 %}
+{% for field in fields %}
+{% if field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","enumeration")|list|length > 0 %}
     {{ field.name }} = EnumField({{ field.name }}Values)
-    {% endif %}
-    {% endfor %}
+{% endif %}
+{% endfor %}
     class Meta:
         """Model initialization"""
         model = {{ entity.name }}

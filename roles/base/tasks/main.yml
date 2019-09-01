@@ -16,7 +16,7 @@
     entity: "{{ item }}"
     fields: "{{ (entity.relations|selectattr('name','equalto','fields')|first).children|list }}"
   template: 
-    src: "Entity.py.j2"
+    src: "Controller.py.j2"
     dest: "{{ targetDir }}/app/controller/{{ entity.name|lower }}_controller.py"
 - name: create REST controller __init__
   template: 
@@ -32,5 +32,5 @@
     dest: "{{ targetDir }}/app/config.py"
 - name: create docker compose
   template: 
-    src: "DockerCompose.yaml.j2"
+    src: "DockerCompose.yml.j2"
     dest: "{{ targetDir }}/docker-compose.yml"
