@@ -15,21 +15,21 @@ FIELDS = NS.model(
     '{{ entity.name }}', {
 {% for field in fields %}
 {% if field.attributes|selectattr("name","equalto","fk")|selectattr("value","equalto","ManyToOne")|list|length > 0 %}
-        {{ field.name }}Id: fields.Integer
+        {{ field.name }}Id: fields.Integer{% if not loop.last %},{% endif %}
 {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Date")|list|length > 0 %}
-        {{ field.name }}: fields.Date
+        {{ field.name }}: fields.Date{% if not loop.last %},{% endif %}
 {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","String")|list|length > 0 %}
-        {{ field.name }}: fields.String
+        {{ field.name }}: fields.String{% if not loop.last %},{% endif %}
 {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Text")|list|length > 0 %}
-        {{ field.name }}: fields.String
+        {{ field.name }}: fields.String{% if not loop.last %},{% endif %}
 {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Integer")|list|length > 0 %}
-        {{ field.name }}: fields.Integer
+        {{ field.name }}: fields.Integer{% if not loop.last %},{% endif %}
 {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Double")|list|length > 0 %}
-        {{ field.name }}: fields.Float
+        {{ field.name }}: fields.Float{% if not loop.last %},{% endif %}
 {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","Long")|list|length > 0 %}
-        {{ field.name }}: fields.BigInteger
+        {{ field.name }}: fields.BigInteger{% if not loop.last %},{% endif %}
 {% elif field.attributes|selectattr("name","equalto","type")|selectattr("value","equalto","enumeration")|list|length > 0 %}
-        {{ field.name }}: fields.String
+        {{ field.name }}: fields.String{% if not loop.last %},{% endif %}
 {% endif %}
 {% endfor %}
     })

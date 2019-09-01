@@ -1,2 +1,2 @@
 """Listing all controllers to be imported in the API"""
-__all__ = [{% for entity in entities %}"{{ entity.name }}_controller",{% endfor %}]
+__all__ = [{% for entity in entities %}"{{ entity.name }}_controller"{% if not loop.last %},{% endif %}{% endfor %}]
