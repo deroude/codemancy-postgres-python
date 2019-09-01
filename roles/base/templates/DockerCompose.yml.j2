@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: {{author}}
+      POSTGRES_DB: {{appName}}
+    ports:
+      - 5432:5432
+  
+  app:
+    build: .
+    environment:
+      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://{{author}}:password@db:5432/{{appName}}
+    volumes:
+      - ./:/app
+    ports:
+      - 80:80

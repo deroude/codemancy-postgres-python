@@ -1,0 +1,42 @@
+"""Main module"""
+import werkzeug
+{% if hasSecurity %}
+from flask_jwt import JWT
+from passlib.hash import bcrypt
+{% endif %}
+from app.setup import APP
+# pylint:disable=wildcard-import
+from app.controller import *
+
+{% if hasSecurity %}
+# Authorization section
+from app.domain.{{ securityEntity.name | lower}} import {{ securityEntity.name }}
+
+
+def authenticate(username, password):
+    """Method used by Flask JWT to perform authentication"""
+    auth = {{ securityEntity.name }}.query.filter_by(email=username).first()
+    if auth and bcrypt.verify(password, auth.password):
+        return auth
+
+
+def identity(payload):
+    """Method used by Flask JWT to provide the authenticated user"""
+    auth_id = payload['identity']
+    return {{ securityEntity.name }}.query.filter_by(id=auth_id).first()
+
+
+JWT_AUTH = JWT(APP, authenticate, identity)
+
+{% endif %}
+
+@APP.errorhandler(werkzeug.exceptions.NotFound)
+# pylint:disable=unused-argument
+def not_found(error):
+    """Handler for 404"""
+    return "Requested resource was not found"
+
+
+if __name__ == "__main__":
+    # Only for debugging while developing
+    APP.run(host='0.0.0.0', debug=True, port=80)

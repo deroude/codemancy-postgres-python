@@ -1,0 +1,36 @@
+- name: copy static files
+  copy:
+      src: "{{role_path}}/files/"
+      dest: "{{ targetDir }}"
+- name: create domain scripts for each entity
+  loop: "{{ entities }}"
+  vars:
+    entity: "{{ item }}"
+    fields: "{{ (entity.relations|selectattr('name','equalto','fields')|first).children|list }}"
+  template: 
+    src: "Entity.py.j2"
+    dest: "{{ targetDir }}/app/domain/{{ entity.name|lower }}.py"
+- name: create REST controller for each entity
+  loop: "{{ entities }}"
+  vars:
+    entity: "{{ item }}"
+    fields: "{{ (entity.relations|selectattr('name','equalto','fields')|first).children|list }}"
+  template: 
+    src: "Entity.py.j2"
+    dest: "{{ targetDir }}/app/controller/{{ entity.name|lower }}_controller.py"
+- name: create REST controller __init__
+  template: 
+    src: "ControllerInit.py.j2"
+    dest: "{{ targetDir }}/app/controller/__init__.py"
+- name: create main entrypoint
+  template: 
+    src: "App.py.j2"
+    dest: "{{ targetDir }}/app/app.py"
+- name: create config script
+  template: 
+    src: "Config.py.j2"
+    dest: "{{ targetDir }}/app/config.py"
+- name: create docker compose
+  template: 
+    src: "DockerCompose.yaml.j2"
+    dest: "{{ targetDir }}/docker-compose.yml"

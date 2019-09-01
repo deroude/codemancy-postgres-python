@@ -1,0 +1,8 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  vars:
+    project: "{{ lookup('file', targetDir+'/project.json') | from_json }}"
+  roles:
+    - base
+    - codemancy.domain.base
